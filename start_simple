@@ -1,0 +1,8 @@
+#!/bin/bash
+docker rm --force docker-cinder-13
+docker run --restart=always -d  --name docker-cinder-13\
+           -h devel.localnet \
+           -v /etc/ceph:/etc/ceph \
+           -v /opt/docker/cinder/log:/var/log \
+           -p 35357:35357 -p 8776:8776 -p 5000:5000 \
+           lantaris/docker-cinder-13

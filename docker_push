@@ -1,0 +1,10 @@
+#!/bin/bash
+
+. ./SETTINGS
+
+docker login --username="$REGLOGIN"
+[ $? -ne 0 ] && exit
+
+docker push "$REGISTRY"/"$IMAGENAME":"$IMGVERS1"
+docker push "$REGISTRY"/"$IMAGENAME":"$IMGVERS2"
+

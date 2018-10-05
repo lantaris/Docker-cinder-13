@@ -1,0 +1,19 @@
+#!/bin/bash
+docker rm --force docker-cinder-13
+docker run   --restart=always -d  --name docker-cinder-13 \
+             -h devel.localnet \
+             -e ADMIN_PASS=ADMIN_PASS \
+             -e CINDER_PASS=CINDER_PASS \
+             -e RBD_USER=cinder \
+             -e RBD_POOL=volumes \
+             -e CEPH_CLUSTER=ceph \
+             -e RBD_SECRET_UUID=457eb676-33da-42ec-9a8c-9293d545c111 \
+             -v /opt/docker/cinder/etc/cinder:/etc/cinder \
+             -v /etc/ceph:/etc/ceph \
+             -v /opt/docker/cinder/etc/keystone:/etc/keystone \
+             -v /opt/docker/cinder/lib/cinder:/var/lib/cinder \
+             -v /opt/docker/cinder/lib/mysql:/var/lib/mysql \
+             -v /opt/docker/cinder/lib/keystone:/var/lib/keystone \
+             -v /opt/docker/cinder/log:/var/log \
+             -p 35357:35357 -p 8776:8776 -p 5000:5000 \
+             lantaris/docker-cinder-13

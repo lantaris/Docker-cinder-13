@@ -1,0 +1,7 @@
+#!/bin/bash
+. ./SETTINGS
+
+docker rm --force "$IMAGENAME"
+docker rmi --force "$IMAGENAME"
+docker volume rm $(docker volume ls -q -f dangling=true)
+docker build -t "$REGISTRY"/"$IMAGENAME":"$IMGVERS1" -t "$REGISTRY"/"$IMAGENAME":"$IMGVERS2" .

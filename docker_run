@@ -1,0 +1,13 @@
+#!/bin/bash
+
+. ./SETTINGS
+
+rm -rf /opt/docker/"$IMAGENAME"
+
+docker rm --force "$IMAGENAME"
+
+docker volume rm $(docker volume ls -q -f dangling=true)
+
+echo "Starting Container $IMAGENAME $IMGVERS1 ....."
+echo docker run -it --rm=true --name "$IMAGENAME $CENV $CVOLUMES $CPORTS $REGISTRY/$IMAGENAME:$IMGVERS1"
+#docker run -it --rm=true --name $IMAGENAME $CENV  $CVOLUMES $CPORTS $REGISTRY/$IMAGENAME:$IMGVERS1

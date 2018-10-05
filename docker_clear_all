@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# Stop all
+docker stop $(docker ps -q -a)
+# Delete all containers
+docker rm  --force $(docker ps -a -q)
+# Delete all images
+docker rmi  --force $(docker images -q)
+# Clear ununed volume
+docker volume rm $(docker volume ls -q -f dangling=true)
+

@@ -1,0 +1,24 @@
+#!/bin/bash
+
+# Image settings
+IMAGENAME="docker-cinder-13"
+IMGVERS1="0.0.1"
+IMGVERS2="latest"   #(latest/beta)
+
+# Registry settings
+REGISTRY="lantaris"
+REGLOGIN="lantaris"
+
+# Container settings
+CVOLUMES="-v /opt/docker/cinder/etc/cinder:/etc/cinder \
+          -v /etc/ceph:/etc/ceph \
+          -v /opt/docker/cinder/etc/keystone:/etc/keystone \
+          -v /opt/docker/cinder/lib/cinder:/var/lib/cinder \
+          -v /opt/docker/cinder/lib/mysql:/var/lib/mysql \
+          -v /opt/docker/cinder/lib/keystone:/var/lib/keystone \
+          -v /opt/docker/cinder/log:/var/log"
+
+CPORTS="-p 35357:35357 -p 8776:8776 -p 5000:5000"
+#CENV="-h h200.localnet -e ADMIN_PASS=ADMIN_PASS -e CINDER_PASS=CINDER_PASS -e RBD_USER=admin 
+#                       -e RBD_POOL=volumes -e CEPH_CLUSTER=ceph -e RBD_SECRET_UUID=457eb676-33da-42ec-9a8c-9293d545c337"
+CENV="-h devel.localnet"

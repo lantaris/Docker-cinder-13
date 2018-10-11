@@ -1,11 +1,11 @@
 # docker-cinder-13
 
-### Cinder + keystone container used for link oVirt 4.1/4.2 (0.0.1) and SDS Ceph V13(mimic) RBD
+### Cinder + keystone контейнер для связки системы виртуализации oVirt 4.1/4.2 и SDS Ceph V12(mimic) в режиме RBD
 
 
-Directory '/etc/eph' must contain ceph.conf and the key for the ceph cluster user "cinder".
+Директория '/etc/ceph' должна содержать ceph.conf(конфигурационный файл Ceph) ключ доступа к пулу RBD для пользователя 'cinder'
 
-Simple start:
+Простой запуск контейнера:
 
 docker run --restart=always -d --name docker-cinder-13 \
 -h "HOSTNAME" \
@@ -14,9 +14,9 @@ docker run --restart=always -d --name docker-cinder-13 \
 -p 35357:35357 -p 8776:8776 -p 5000:5000 \
 lantaris/docker-cinder-13
 
-"HOSTNAME" - hostname for cinder container
+"HOSTNAME" - имя хоста (должно резовиться в DNS), где разворачивается контейнер.
 
-Advanced run:
+Расширенный запуск(рекомендуется):
 
 docker run --restart=always -d --name docker-cinder-13 \
 -h "HOSTNAME" \
@@ -36,22 +36,51 @@ docker run --restart=always -d --name docker-cinder-13 \
 -p 35357:35357 -p 8776:8776 -p 5000:5000 \
 lantaris/docker-cinder-13
 
-"HOSTNAME" - hostname for cinder container
+"HOSTNAME" - имя хоста (должно резолвиться в DNS), где разворачивается контейнер.
 
-ADMIN_PASS - keystone administrator user password (Default: ADMIN_PASS)
+ADMIN_PASS - Пароль администратора связки cinder+keystone (По умолчанию: ADMIN_PASS).
+             Вход в контейнер в режиме администратора ( docker exec -ti docker-cinder-13 bash "/bash-admin.sh" )
 
-CINDER_PASS - cinder user password (Default: CINDER_PASS)
+CINDER_PASS - Пароль пользователя cinder (По умолчанию: CINDER_PASS).
+              Вход в контейнер под пользователем 'cinder' ( docker exec -ti docker-cinder-13 bash "/bash-cinder.sh" )
 
-RBD_USER - Cinder rbd_user parameter (Default: cinder)
+RBD_USER - Имя пользователя для доступа к пулу с томами, указанному в переменной RBD_POOL (По умолчанию: cinder)
 
-RBD_POOL - Cinder rbd_pool parameter (Default: volumes)
+RBD_POOL - Имя пула с томами (По умолчанию: volumes)
 
-CEPH_CLUSTER - Ceph cluster name /etc/ceph/<ceph cluster>.conf (Default: ceph)
+CEPH_CLUSTER - Имя кластера Ceph /etc/ceph/<ceph cluster>.conf (По умолчанию: ceph)
   
-RBD_SECRET_UUID - Cinder rbd_secret_uuid parameter 
-                   (Default value autogenerate. See: 'docker exec ovirt-cinder-4.1 cat /etc/cinder/cinder.conf |grep rbd_secret_uuid')
+RBD_SECRET_UUID - UUID сервиса Cinder. (Указывается в дальнейшем в oVirt). По умолчанию генерируется автоматически.
+                  (Получить сгенерированный UUID можно следующим образом 'docker exec docker-cinder-13 cat /etc/cinder/cinder.conf |grep rbd_secret_uuid)
 
 
-Detailed starting log:
+## Первый старт может занять продолжительное время 10-15 мин.
+
+Детальный мониторинг первого старта:
 
 tail -f /opt/docker/cinder/log/supervisor/prepare.out.log
+
+## Что прописывается в oVirt
+
+На всех нодах должен быть установлен базовый набор Ceph. В каталоге /etc/ceph/ должен быть конфигурационный файл кластера Ceph и ключь пользователя, которому открыт доступ к пулу c RBD указанному в переменной контейнера (RBD_USER)
+
+1. В разделе "External Providers" добавляем нового провайдера.
+2. Name - указываем любое удобное имя.
+3. Type - OpenStack Volume
+4. Provider URL - http://<имя хоста с контейнером>:8776
+5. Requires Authentication - устанавливаем флаг.
+6. Username - cinder
+7. Password - указываем раннее заданый пароль для переменной (CINDER_PASS)
+8. Tenant Name - service
+9. Authentication URL - http://<имя хоста с контейнером>:35357/v2.0/
+
+**Нажимаем TEST. Если тест прошел удачно, сохраняем настройки.
+
+**Становимся на вновь созданную запись внешнего провайдера.
+
+**Переходим в закладку "Authentication Keys", добавляем новую запись
+
+1. UUID - раннее указанный UUID в переменной (RBD_SECRET_UUID)
+2. Value - ключь пользователя, раннее указанного в переменной (RBD_USER). 
+
+** Сохраняем настройки, пользуемся.

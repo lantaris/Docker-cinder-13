@@ -1,6 +1,6 @@
 # docker-cinder-13
 
-### Cinder + keystone container is used for link Virt 4.1/4.2 (0.0.1) and SDS Ceph V13(mimic) RBD
+### Cinder + keystone container used for link oVirt 4.1/4.2 (0.0.1) and SDS Ceph V13(mimic) RBD
 
 
 Directory '/etc/eph' must contain ceph.conf and the key for the ceph cluster user "cinder".

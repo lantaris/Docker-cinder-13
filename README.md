@@ -1,6 +1,6 @@
 # docker-cinder-13
 
-### Cinder + keystone контейнер для связки системы виртуализации oVirt 4.1/4.2 и SDS Ceph V12(mimic) в режиме RBD
+### Cinder + keystone контейнер для связки системы виртуализации oVirt 4.1/4.2 и SDS Ceph V13(mimic) в режиме RBD
 
 
 Директория '/etc/ceph' должна содержать ceph.conf(конфигурационный файл Ceph) ключ доступа к пулу RBD для пользователя 'cinder'
